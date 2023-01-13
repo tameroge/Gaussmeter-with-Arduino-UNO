@@ -1,0 +1,75 @@
+//Gaussmeter with Arduino UNO
+//designed by tameroge
+//14.01.2023
+
+#include <LiquidCrystal_I2C.h> 
+#define sensor A0 
+
+LiquidCrystal_I2C lcd(0x27, 16, 2); 
+
+int Gauss; int gauss1;
+int offset = 06 ;  
+
+void setup() {   
+Serial.begin(9600);   
+{    
+lcd.begin(16, 2);    
+lcd.backlight();     
+lcd.init () ;     
+lcd.clear() ;     
+lcd.backlight() ;   
+}   
+StartupScreen(); 
+}  
+
+void loop() {
+int volt = analogRead(A0);   
+int kutup = analogRead(A1);   
+double voltage = map(volt, 0, 1023, 0, 2500) + offset;  
+double voltage1 = map(kutup, 0, 1023, 0, 2500) + offset;   
+voltage /= 100 ;   
+voltage1 /= 100 ;  
+Serial.print("Voltage: ");   
+Serial.print(voltage);  
+Serial.println("V");   
+gauss1 = Gauss-13312;    
+Gauss = (voltage - 2.5) * 1300;   
+
+lcd.setCursor(0, 0);   
+lcd.print("GAUSS");   
+lcd.setCursor(11, 0);  
+lcd.print(gauss1);   
+lcd.setCursor(5, 1) ;   
+
+if (voltage1 < 5)lcd.print("NORTH");   
+else lcd.print("SOUTH");      
+delay(500);    
+lcd.clear();
+} 
+
+void StartupScreen() {   
+lcd.setCursor(0, 0) ;   
+lcd.print("ATU EEE") ;   
+lcd.setCursor(0, 1) ;   
+lcd.print("FINAL PROJECT") ;   
+delay(3000) ;  
+lcd.clear() ; 
+
+lcd.setCursor(0, 0) ;   
+lcd.print("Gaussmeter") ;   
+lcd.setCursor(0, 1) ;   
+lcd.print("by tameroge") ;   
+delay(3000) ;   
+lcd.clear() ;  
+
+lcd.setCursor(0,0);   
+lcd.print("<----");   
+lcd.setCursor(6,0);   
+lcd.print("Pole");   
+lcd.setCursor(11,1);  
+lcd.print("---->");   
+lcd.setCursor(5,1);  
+lcd.print("Gauss");  
+delay(3000);  
+lcd.clear(); 
+}
